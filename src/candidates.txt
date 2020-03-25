@@ -1,0 +1,5 @@
+Andrei Popescu,800,receptionist,5
+Mara Lazar,600,cleaner,10
+Razvan Dumitru,750,assistant,2
+Alexandru Vlad,1000,manager,10
+Mihai Marin,600,guardian,12

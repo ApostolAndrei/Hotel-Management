@@ -1,0 +1,4 @@
+Andrei Ionescu,800,14,10
+Marius Miron,785,6,7
+Alex Dima,850,2,15
+Mihnea Trifan,900,10,17
