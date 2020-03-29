@@ -3,11 +3,8 @@ import java.util.*;
 import java.io.File;
 
 public class Management {
-    protected List<Employee> employees = new ArrayList<Employee>();
-    protected List<Candidate> candidates = new ArrayList<Candidate>();
-    protected List<Client> clients = new ArrayList<Client>();
-    protected List<Leader> leaders = new ArrayList<Leader>();
-    protected List<RoyalClient> royals = new ArrayList<RoyalClient>();
+    protected List <Human> persons = new ArrayList<Human>();
+    protected Set <Hotel> hotels = new HashSet<Hotel>();
 
 
     public Management() throws IOException {
@@ -54,110 +51,146 @@ public class Management {
         }
 
 
+        File hotels = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\hotels.txt");
+        Scanner inHotel = new Scanner(hotels);
+        while (inHotel.hasNextLine()) {
+            String temp = inHotel.nextLine();
+            String[] data = temp.split(",");
+            this.addHotel(new Hotel(data[0],Integer.valueOf(data[1])));
+        }
+
+
+
+           CEO ceo = CEO.getInstance();
+
+
+            System.out.println("\n ********** CEO : "  + ceo.getName() + " ********** \n");
+            this.persons.add(ceo);
+
+
     }
 
 
     void addClient(Client c) {
-        this.clients.add(c);
+        this.persons.add(c);
     }
 
     void addEmployees(Employee e) {
-        this.employees.add(e);
+        this.persons.add(e);
     }
 
     void addCandidates(Candidate c) {
-        this.candidates.add(c);
+        this.persons.add(c);
     }
 
-    void addRoyal(RoyalClient r) {this.royals.add(r);}
+    void addRoyal(RoyalClient r) {this.persons.add(r);}
 
-    void addLeader(Leader l) { this.leaders.add(l);}
+    void addLeader(Leader l) { this.persons.add(l);}
+
+    void addHotel(Hotel h){ this.hotels.add(h); }
 
 
 
     void listAllClients() {
-        for (Client c : this.clients)
-            System.out.println(c.print());
+        for (Human c : this.persons)
+            if (c instanceof Client)
+                System.out.println(c.print());
     }
 
     void listAllRoyalClients() {
-        for (RoyalClient c : this.royals)
-            System.out.println(c.print());
+        for (Human c : this.persons)
+            if (c instanceof RoyalClient)
+                System.out.println(c.print());
     }
 
     void listAllCandidates() {
-        for (Candidate c : this.candidates)
-            System.out.println(c.print());
+        for (Human c : this.persons)
+            if (c instanceof Candidate)
+                System.out.println(c.print());
     }
 
     void listAllEmployees() {
-        for (Employee c : this.employees)
+        for (Human c : this.persons)
+        if (c instanceof Employee)
             System.out.println(c.print());
     }
 
     void listAllLeaders(){
-        for (Leader c : this.leaders)
-            System.out.println(c.print());
+        for (Human c : this.persons)
+            if (c instanceof Leader)
+                System.out.println(c.print());
+    }
+
+    void listAllHotels()
+    {
+        for(Hotel h : this.hotels)
+            h.print();
     }
 
     int calculateProfit() {
         int salaries = 0;
         int earnings = 0;
 
-        for (Employee e : this.employees)
-            salaries += e.getSalary();
+        for (Human c : this.persons)
+            if (c instanceof Employee)
+              salaries += ((Employee)c).getSalary();
 
-        for (Client c : this.clients)
-            earnings += c.getRezervation().getTotal_price();
+        for (Human c : this.persons)
+            if (c instanceof Client)
+            earnings += ((Client) c).getRezervation().getTotal_price();
 
         return earnings - salaries;
     }
 
 
     String getBestEmployee() {
-        Employee best = new Employee();
+        Human best = new Employee();
 
-        for (Employee man : this.employees) {
+        for (Human c : this.persons) {
 
-            if (best.getBenefic_actions() < man.getBenefic_actions())
-                best = man;
+            if (((Employee)best).getBenefic_actions() < ((Employee)c).getBenefic_actions() && c instanceof Employee)
+                best = c;
         }
         return " Employee of the month: " + best.getName();
     }
 
 
+
+
     void searchClient(String name) {
 
-        for (Client c : this.clients) {
-            if (name.equals(c.getFull_name()))
+        for (Human c : this.persons) {
+            if (name.equals(c.getName()) && c instanceof Client)
                 System.out.println(c.print());
         }
     }
 
 
     void increaseSalary(String name, int bonus) {
-        for (Employee e : this.employees)
-            if (e.getName().equals(name))
+        for (Human e : this.persons)
+            if (e.getName().equals(name) && e instanceof Employee)
                 {
-                    e.setSalary(e.getSalary() + bonus);
-                    System.out.println("New salary: " + e.getSalary());
+                    ((Employee) e).setSalary(((Employee) e).getSalary() + bonus);
+                    System.out.println("New salary: " + ((Employee) e).getSalary());
                 return;
                  }
     }
 
     void decreaseSalary(String name, int bonus) {
-        for (Employee e : this.employees)
-            if (e.getName().equals(name)) {
-                e.setSalary(e.getSalary() - bonus);
-                System.out.println("New salary: " + e.getSalary());
+        for (Human e : this.persons)
+            if (e.getName().equals(name) && e instanceof Employee) {
+
+                ((Employee) e).setSalary(((Employee) e).getSalary() - bonus);
+                System.out.println("New salary: " + ((Employee) e).getSalary());
                 return;
+
             }
     }
 
     void hireCandidate(String name) {
-        for (Candidate c : this.candidates) {
-            if (c.getName().equals(name)) {
-                candidates.remove(c);
+        for (Human c : this.persons) {
+            if (c.getName().equals(name) && c instanceof Candidate) {
+                persons.remove(c);
                 this.addEmployees(new Employee(c.getName(), Employee.starting_salary , 27, 0));
                 System.out.println("Hired");
                 return;
@@ -166,10 +199,10 @@ public class Management {
     }
 
     void promote(String name) {
-        for ( Employee e : this.employees) {
-            if (e.getName().equals(name)) {
-                employees.remove(e);
-                this.addLeader(new Leader(e.getName(), Calendar.getInstance().get(Calendar.YEAR), e.getSalary()+1000));
+        for ( Human e : this.persons) {
+            if (e.getName().equals(name) && e instanceof Employee) {
+                persons.remove(e);
+                this.addLeader(new Leader(e.getName(), Calendar.getInstance().get(Calendar.YEAR), ((Employee) e).getSalary()+1000));
                 System.out.println("Promoted");
                 return;
             }
@@ -178,14 +211,19 @@ public class Management {
 
     void sortCandidatesByExp()
     {
-        Collections.sort(candidates, new Comparator<Candidate>() {
-            public int compare(Candidate c1, Candidate c2) {
-                return Float.compare(c1.getYears_of_experience(), c2.getYears_of_experience());
+        Collections.sort(persons, new Comparator<Human>() {
+            public int compare(Human h1, Human h2) {
+
+                    if(h1 instanceof Candidate && h2 instanceof Candidate)
+                    return Float.compare(((Candidate) h1).getYears_of_experience(), ((Candidate) h2).getYears_of_experience());
+                    return 0;
             }
         });
-        for (Candidate c : candidates)
-            System.out.println(c.print());
+        for (Human c : persons)
+            if(c instanceof Candidate)
+                System.out.println(c.print());
     }
+
 
     void ChooseYourOption()
     {
@@ -277,6 +315,11 @@ public class Management {
                 System.out.println("Press 0 to display the menu again");
                 break;
 
+            case 13:
+                listAllHotels();
+                System.out.println("Press 0 to display the menu again");
+                break;
+
             case 0:
                 printMenu();
                 break;
@@ -296,6 +339,7 @@ public class Management {
     {
 
         System.out.println("------------------ MENU ------------------ \n");
+
         System.out.println(" 1 --> Display all your clients ");
         System.out.println(" 2 --> Display royal clients");
         System.out.println(" 3 --> Display all your employees");
@@ -308,9 +352,23 @@ public class Management {
         System.out.println(" 10 --> Increase salary of an employee ");
         System.out.println(" 11 --> Decrease salary of an employee ");
         System.out.println(" 12 --> Calculate  profit ");
+        System.out.println(" 13 --> List all our hotels");
 
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
