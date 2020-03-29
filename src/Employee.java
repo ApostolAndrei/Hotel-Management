@@ -1,6 +1,6 @@
 public class Employee {
 
-    private String name;
+    private String name
     private int id;
     private int salary;
     private int freedays;
