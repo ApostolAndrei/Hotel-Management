@@ -1,15 +1,23 @@
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.io.File;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class Management {
     protected List <Human> persons = new ArrayList<Human>();
     protected Set <Hotel> hotels = new HashSet<Hotel>();
+    WriteFile audit = WriteFile.getInstance();
 
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    String method = new Throwable().getStackTrace()[0].getMethodName();
 
     public Management() throws IOException {
 
-        File clients = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\clients.txt");
+       File clients = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\clients.csv");
         Scanner inClient = new Scanner(clients);
         while (inClient.hasNextLine()) {
             String temp = inClient.nextLine();
@@ -18,7 +26,7 @@ public class Management {
         }
 
 
-        File candidates = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\candidates.txt");
+        File candidates = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\candidates.csv");
         Scanner inCandidates = new Scanner(candidates);
         while (inCandidates.hasNextLine()) {
             String temp = inCandidates.nextLine();
@@ -26,7 +34,7 @@ public class Management {
             this.addCandidates(new Candidate(data[0], Integer.valueOf(data[1]), data[2], Integer.valueOf(data[3])));
         }
 
-        File employees = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\employees.txt");
+        File employees = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\employees.csv");
         Scanner inEmployees = new Scanner(employees);
         while (inEmployees.hasNextLine()) {
             String temp = inEmployees.nextLine();
@@ -34,7 +42,7 @@ public class Management {
             this.addEmployees(new Employee(data[0], Integer.valueOf(data[1]), Integer.valueOf(data[2]), Integer.valueOf(data[3])));
         }
 
-        File leaders = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\leaders.txt");
+        File leaders = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Leaders.csv");
         Scanner inLeaders = new Scanner(leaders);
         while (inLeaders.hasNextLine()) {
             String temp = inLeaders.nextLine();
@@ -42,7 +50,7 @@ public class Management {
             this.addLeader(new Leader(data[0], Integer.valueOf(data[1]), Integer.valueOf(data[2])));
         }
 
-        File royals = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Royals.txt");
+        File royals = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Royals.csv");
         Scanner inRoyal = new Scanner(royals);
         while (inRoyal.hasNextLine()) {
             String temp = inRoyal.nextLine();
@@ -51,7 +59,7 @@ public class Management {
         }
 
 
-        File hotels = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\hotels.txt");
+        File hotels = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\hotels.csv");
         Scanner inHotel = new Scanner(hotels);
         while (inHotel.hasNextLine()) {
             String temp = inHotel.nextLine();
@@ -69,6 +77,9 @@ public class Management {
 
 
     }
+
+
+
 
 
     void addClient(Client c) {
@@ -92,42 +103,63 @@ public class Management {
 
 
     void listAllClients() {
+
         for (Human c : this.persons)
             if (c instanceof Client)
                 System.out.println(c.print());
+            audit.audit();
     }
 
     void listAllRoyalClients() {
+
+
         for (Human c : this.persons)
             if (c instanceof RoyalClient)
                 System.out.println(c.print());
+        audit.audit();
     }
 
     void listAllCandidates() {
+
         for (Human c : this.persons)
             if (c instanceof Candidate)
                 System.out.println(c.print());
+        audit.audit();
+
     }
 
     void listAllEmployees() {
+
+
+
         for (Human c : this.persons)
         if (c instanceof Employee)
             System.out.println(c.print());
+        audit.audit();
     }
 
     void listAllLeaders(){
+
+
         for (Human c : this.persons)
             if (c instanceof Leader)
                 System.out.println(c.print());
+        audit.audit();
     }
 
     void listAllHotels()
     {
+
+
         for(Hotel h : this.hotels)
             h.print();
+        audit.audit();
     }
 
     int calculateProfit() {
+
+        audit.audit();
+
         int salaries = 0;
         int earnings = 0;
 
@@ -144,7 +176,11 @@ public class Management {
 
 
     String getBestEmployee() {
+
+
         Human best = new Employee();
+        audit.audit();
+
 
         for (Human c : this.persons) {
 
@@ -159,6 +195,8 @@ public class Management {
 
     void searchClient(String name) {
 
+        audit.audit();
+
         for (Human c : this.persons) {
             if (name.equals(c.getName()) && c instanceof Client)
                 System.out.println(c.print());
@@ -167,6 +205,9 @@ public class Management {
 
 
     void increaseSalary(String name, int bonus) {
+
+        audit.audit();
+
         for (Human e : this.persons)
             if (e.getName().equals(name) && e instanceof Employee)
                 {
@@ -177,6 +218,9 @@ public class Management {
     }
 
     void decreaseSalary(String name, int bonus) {
+
+       audit.audit();
+
         for (Human e : this.persons)
             if (e.getName().equals(name) && e instanceof Employee) {
 
@@ -188,6 +232,9 @@ public class Management {
     }
 
     void hireCandidate(String name) {
+
+    audit.audit();
+
         for (Human c : this.persons) {
             if (c.getName().equals(name) && c instanceof Candidate) {
                 persons.remove(c);
@@ -199,6 +246,9 @@ public class Management {
     }
 
     void promote(String name) {
+
+     audit.audit();
+
         for ( Human e : this.persons) {
             if (e.getName().equals(name) && e instanceof Employee) {
                 persons.remove(e);
@@ -211,6 +261,8 @@ public class Management {
 
     void sortCandidatesByExp()
     {
+        audit.audit();
+
         Collections.sort(persons, new Comparator<Human>() {
             public int compare(Human h1, Human h2) {
 
@@ -219,15 +271,14 @@ public class Management {
                     return 0;
             }
         });
-        for (Human c : persons)
-            if(c instanceof Candidate)
-                System.out.println(c.print());
+        listAllCandidates();
     }
 
 
     void ChooseYourOption()
     {
         Scanner s = new Scanner(System.in);
+
         boolean input = true;
         printMenu();
 
@@ -258,14 +309,12 @@ public class Management {
 
             case 5:
                 sortCandidatesByExp();
-
                 System.out.println("Press 0 to display the menu again");
                 break;
 
             case 6:
 
                 Scanner s2 = new Scanner(System.in);
-                System.out.println("Type the name of the candidate : ");
                 hireCandidate(s2.nextLine());
                 System.out.println("Press 0 to display the menu again");
                 break;
@@ -273,8 +322,10 @@ public class Management {
             case 7:
 
                 Scanner s3 = new Scanner(System.in);
+
                 System.out.println("Type the name of the client : ");
                 searchClient(s3.nextLine());
+
                 System.out.println("Press 0 to display the menu again");
                 break;
 
@@ -322,12 +373,14 @@ public class Management {
 
             case 0:
                 printMenu();
+                System.out.println(timestamp);
                 break;
 
             default:
-                System.out.println("You exit the menu");
+                System.out.println("Something went wrong");
                 input = false;
                 break;
+
         }
 
         } while(input);
@@ -355,20 +408,8 @@ public class Management {
         System.out.println(" 13 --> List all our hotels");
 
     }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
