@@ -1,3 +1,0 @@
-Bucuresti,10000
-Constanta,5000
-Cluj,7500
