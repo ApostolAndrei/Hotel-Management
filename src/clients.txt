@@ -1,5 +1,0 @@
-Ion Popescu,Romania,2,10,2000
-Andrei Pavel,Romania,1,6,500
-Cristi Enescu,Greece,2,3,499
-Paul Ionescu,Uruguay,3,10,3000
-Stefan Alexandru,USA,2,2,350
