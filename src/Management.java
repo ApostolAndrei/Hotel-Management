@@ -1,71 +1,49 @@
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.io.File;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Management {
     protected List <Human> persons = new ArrayList<Human>();
     protected Set <Hotel> hotels = new HashSet<Hotel>();
-    WriteFile audit = WriteFile.getInstance();
+    ReadFile fin = ReadFile.getInstance();
 
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-    String method = new Throwable().getStackTrace()[0].getMethodName();
+
 
     public Management() throws IOException {
 
-       File clients = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\clients.csv");
-        Scanner inClient = new Scanner(clients);
-        while (inClient.hasNextLine()) {
-            String temp = inClient.nextLine();
-            String[] data = temp.split(",");
-            this.addClient(new Client(data[0], data[1], new Reservation(Integer.valueOf(data[2]), Integer.valueOf(data[3]), Integer.valueOf(data[4]))));
-        }
+       List<String []> clients =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\clients.csv");
+       for(String[] line : clients)
+           this.addClient(new Client(line[0],line[1],new Reservation(Integer.valueOf(line[2]),Integer.valueOf(line[3]) , Integer.valueOf(line[4]) ) ) );
 
 
-        File candidates = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\candidates.csv");
-        Scanner inCandidates = new Scanner(candidates);
-        while (inCandidates.hasNextLine()) {
-            String temp = inCandidates.nextLine();
-            String[] data = temp.split(",");
-            this.addCandidates(new Candidate(data[0], Integer.valueOf(data[1]), data[2], Integer.valueOf(data[3])));
-        }
-
-        File employees = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\employees.csv");
-        Scanner inEmployees = new Scanner(employees);
-        while (inEmployees.hasNextLine()) {
-            String temp = inEmployees.nextLine();
-            String[] data = temp.split(",");
-            this.addEmployees(new Employee(data[0], Integer.valueOf(data[1]), Integer.valueOf(data[2]), Integer.valueOf(data[3])));
-        }
-
-        File leaders = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Leaders.csv");
-        Scanner inLeaders = new Scanner(leaders);
-        while (inLeaders.hasNextLine()) {
-            String temp = inLeaders.nextLine();
-            String[] data = temp.split(",");
-            this.addLeader(new Leader(data[0], Integer.valueOf(data[1]), Integer.valueOf(data[2])));
-        }
-
-        File royals = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Royals.csv");
-        Scanner inRoyal = new Scanner(royals);
-        while (inRoyal.hasNextLine()) {
-            String temp = inRoyal.nextLine();
-            String[] data = temp.split(",");
-            this.addRoyal(new RoyalClient(data[0], data[1], new Reservation(Integer.valueOf(data[2]), Integer.valueOf(data[3]), Integer.valueOf(data[4])),data[5],data[6],data[7]));
-        }
+        List<String [] > candidates =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\candidates.csv");
+        for(String[] line : candidates)
+            this.addCandidates(new Candidate(line[0], Integer.valueOf(line[1]), line[2], Integer.valueOf(line[3])));
 
 
-        File hotels = new File("C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\hotels.csv");
-        Scanner inHotel = new Scanner(hotels);
-        while (inHotel.hasNextLine()) {
-            String temp = inHotel.nextLine();
-            String[] data = temp.split(",");
-            this.addHotel(new Hotel(data[0],Integer.valueOf(data[1])));
-        }
+        List<String [] > employees =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\employees.csv");
+        for(String[] line : employees)
+            this.addEmployees(new Employee(line[0], Integer.valueOf(line[1]), Integer.valueOf(line[2]), Integer.valueOf(line[3])));
+
+
+        List<String [] > leaders =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Leaders.csv");
+        for(String[] line : leaders)
+            this.addLeader(new Leader(line[0], Integer.valueOf(line[1]), Integer.valueOf(line[2])));
+
+
+        List<String [] > royals =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Royals.csv");
+        for(String[] line : royals)
+            this.addRoyal(new RoyalClient(line[0], line[1], new Reservation(Integer.valueOf(line[2]), Integer.valueOf(line[3]), Integer.valueOf(line[4])),line[5],line[6],line[7]));
+
+
+
+        List<String [] > hotels =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\hotels.csv");
+        for(String[] line : hotels)
+            this.addHotel(new Hotel(line[0],Integer.valueOf(line[1])));
+
 
 
 
@@ -107,7 +85,7 @@ public class Management {
         for (Human c : this.persons)
             if (c instanceof Client)
                 System.out.println(c.print());
-            audit.audit();
+            fin.audit();
     }
 
     void listAllRoyalClients() {
@@ -116,7 +94,7 @@ public class Management {
         for (Human c : this.persons)
             if (c instanceof RoyalClient)
                 System.out.println(c.print());
-        audit.audit();
+        fin.audit();
     }
 
     void listAllCandidates() {
@@ -124,7 +102,7 @@ public class Management {
         for (Human c : this.persons)
             if (c instanceof Candidate)
                 System.out.println(c.print());
-        audit.audit();
+        fin.audit();
 
     }
 
@@ -135,7 +113,7 @@ public class Management {
         for (Human c : this.persons)
         if (c instanceof Employee)
             System.out.println(c.print());
-        audit.audit();
+       fin.audit();
     }
 
     void listAllLeaders(){
@@ -144,7 +122,7 @@ public class Management {
         for (Human c : this.persons)
             if (c instanceof Leader)
                 System.out.println(c.print());
-        audit.audit();
+        fin.audit();
     }
 
     void listAllHotels()
@@ -153,12 +131,12 @@ public class Management {
 
         for(Hotel h : this.hotels)
             h.print();
-        audit.audit();
+       fin.audit();
     }
 
     int calculateProfit() {
 
-        audit.audit();
+       fin.audit();
 
         int salaries = 0;
         int earnings = 0;
@@ -179,12 +157,12 @@ public class Management {
 
 
         Human best = new Employee();
-        audit.audit();
+        fin.audit();
 
 
         for (Human c : this.persons) {
 
-            if (((Employee)best).getBenefic_actions() < ((Employee)c).getBenefic_actions() && c instanceof Employee)
+            if (((Employee)best).getBenefic_actions() < ((Employee)c).getBenefic_actions())
                 best = c;
         }
         return " Employee of the month: " + best.getName();
@@ -195,7 +173,7 @@ public class Management {
 
     void searchClient(String name) {
 
-        audit.audit();
+        fin.audit();
 
         for (Human c : this.persons) {
             if (name.equals(c.getName()) && c instanceof Client)
@@ -206,7 +184,7 @@ public class Management {
 
     void increaseSalary(String name, int bonus) {
 
-        audit.audit();
+        fin.audit();
 
         for (Human e : this.persons)
             if (e.getName().equals(name) && e instanceof Employee)
@@ -219,7 +197,7 @@ public class Management {
 
     void decreaseSalary(String name, int bonus) {
 
-       audit.audit();
+       fin.audit();
 
         for (Human e : this.persons)
             if (e.getName().equals(name) && e instanceof Employee) {
@@ -233,7 +211,7 @@ public class Management {
 
     void hireCandidate(String name) {
 
-    audit.audit();
+    fin.audit();
 
         for (Human c : this.persons) {
             if (c.getName().equals(name) && c instanceof Candidate) {
@@ -247,7 +225,7 @@ public class Management {
 
     void promote(String name) {
 
-     audit.audit();
+     fin.audit();
 
         for ( Human e : this.persons) {
             if (e.getName().equals(name) && e instanceof Employee) {
@@ -261,7 +239,7 @@ public class Management {
 
     void sortCandidatesByExp()
     {
-        audit.audit();
+        fin.audit();
 
         Collections.sort(persons, new Comparator<Human>() {
             public int compare(Human h1, Human h2) {
