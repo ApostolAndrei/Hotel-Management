@@ -18,8 +18,6 @@ public class Reservation {
         return number_of_days;
     }
 
-
-
     public int getTotal_price() {
         return total_price;
     }

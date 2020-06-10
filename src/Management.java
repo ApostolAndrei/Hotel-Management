@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.*;
 import java.io.File;
 import java.sql.Timestamp;
+import java.sql.*;
 
 
 public class Management {
@@ -12,26 +13,129 @@ public class Management {
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 
+    String url = "jdbc:mysql://localhost:3306/hotelmanag";
+    String username = "root";
+    String password = "";
+
+    private static ResultSet getAllClients(Statement statement)
+
+    {
+        String query = "SELECT * FROM hotelmanag.clients";
+        try{
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        } return null;
+    }
+
+    private static ResultSet getAllCandidates(Statement statement)
+
+    {
+        String query = "SELECT * FROM hotelmanag.candidates";
+        try{
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        } return null;
+    }
+
+    private static ResultSet getAllEmployees(Statement statement)
+    {
+        String query = "SELECT * FROM hotelmanag.employees";
+        try{
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        } return null;
+    }
+
+    private static ResultSet getAllLeaders(Statement statement)
+    {
+        String query = "SELECT * FROM hotelmanag.leaders";
+        try{
+            return statement.executeQuery(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        } return null;
+    }
+
+
+
     public Management() throws IOException {
 
-       List<String []> clients =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\clients.csv");
-       for(String[] line : clients)
-           this.addClient(new Client(line[0],line[1],new Reservation(Integer.valueOf(line[2]),Integer.valueOf(line[3]) , Integer.valueOf(line[4]) ) ) );
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement = connection.createStatement()) {
+
+            ResultSet clients = getAllClients(statement);
 
 
-        List<String [] > candidates =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\candidates.csv");
-        for(String[] line : candidates)
-            this.addCandidates(new Candidate(line[0], Integer.valueOf(line[1]), line[2], Integer.valueOf(line[3])));
+            while(clients.next()) {
+                Client c = new Client(clients.getString("Name"),
+                                      clients.getString("Country"),
+
+                                      new Reservation(clients.getInt("NrPersons"),
+                                      clients.getInt ("NrNights"),
+                                      clients.getInt ("Price") ));
+                this.addClient(c);
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(e);
+        }
 
 
-        List<String [] > employees =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\employees.csv");
-        for(String[] line : employees)
-            this.addEmployees(new Employee(line[0], Integer.valueOf(line[1]), Integer.valueOf(line[2]), Integer.valueOf(line[3])));
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+        Statement statement2 = connection.createStatement()) {
+            ResultSet candidates = getAllCandidates(statement2);
 
+            while (candidates.next()) {
+                Candidate cand = new Candidate(candidates.getString("CandName"),
+                        candidates.getInt("WantedSalary"),
+                        candidates.getString("Post"),
+                        candidates.getInt("ExpYears"));
 
-        List<String [] > leaders =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Leaders.csv");
-        for(String[] line : leaders)
-            this.addLeader(new Leader(line[0], Integer.valueOf(line[1]), Integer.valueOf(line[2])));
+                this.addCandidates(cand);
+
+            }
+        }
+            catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement3 = connection.createStatement()) {
+            ResultSet employees = getAllEmployees(statement3);
+
+            while (employees.next()) {
+                Employee e = new Employee(employees.getString("Name"),
+                        employees.getInt("Salary"),
+                        employees.getInt("FreeDays"),
+                        employees.getInt("BeneficActions"));
+
+                this.addEmployees(e);
+
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        try(Connection connection = DriverManager.getConnection(url, username, password);
+            Statement statement4 = connection.createStatement()) {
+            ResultSet leaders = getAllLeaders(statement4);
+
+            while (leaders.next()) {
+                Leader l = new Leader(leaders.getString("Name"),
+                        leaders.getInt("FirstYear"),
+                        leaders.getInt("Salary"));
+
+                this.addLeader(l);
+
+            }
+        }
+        catch (SQLException e) {
+            System.out.println(e);
+        }
 
 
         List<String [] > royals =  fin.read( "C:\\Users\\Andrei\\Desktop\\ANUL 2.2\\PAO\\Tema\\src\\Royals.csv");
@@ -52,9 +156,8 @@ public class Management {
 
             System.out.println("\n ********** CEO : "  + ceo.getName() + " ********** \n");
             this.persons.add(ceo);
-
-
     }
+
 
 
 
@@ -160,10 +263,10 @@ public class Management {
         fin.audit();
 
 
-        for (Human c : this.persons) {
+        for (Human e : this.persons) {
 
-            if (((Employee)best).getBenefic_actions() < ((Employee)c).getBenefic_actions())
-                best = c;
+            if (((Employee)best).getBenefic_actions() < ((Employee)e).getBenefic_actions())
+                best = e;
         }
         return " Employee of the month: " + best.getName();
     }
@@ -182,45 +285,51 @@ public class Management {
     }
 
 
-    void increaseSalary(String name, int bonus) {
+    void increaseSalary(Statement s , String name, int bonus) {
 
         fin.audit();
 
-        for (Human e : this.persons)
-            if (e.getName().equals(name) && e instanceof Employee)
-                {
-                    ((Employee) e).setSalary(((Employee) e).getSalary() + bonus);
-                    System.out.println("New salary: " + ((Employee) e).getSalary());
-                return;
-                 }
+        String query = "UPDATE hotelmanag.employees SET Name = '" + name +"' WHERE (Salary = '"+ bonus +"');";
+
+        try{
+            s.executeUpdate(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
     }
 
-    void decreaseSalary(String name, int bonus) {
+    void decreaseSalary(Statement s , String name, int bonus) {
 
        fin.audit();
 
-        for (Human e : this.persons)
-            if (e.getName().equals(name) && e instanceof Employee) {
+        String query = "UPDATE `hotelmanag`.`employees` SET `Salary` = '" + bonus +"' WHERE (`Name` = '"+ name + "')";
 
-                ((Employee) e).setSalary(((Employee) e).getSalary() - bonus);
-                System.out.println("New salary: " + ((Employee) e).getSalary());
-                return;
+        try{
+            s.executeUpdate(query);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
 
-            }
     }
 
-    void hireCandidate(String name) {
+    void hireCandidate(Statement s , String name) {
 
-    fin.audit();
 
-        for (Human c : this.persons) {
-            if (c.getName().equals(name) && c instanceof Candidate) {
-                persons.remove(c);
-                this.addEmployees(new Employee(c.getName(), Employee.starting_salary , 27, 0));
-                System.out.println("Hired");
-                return;
-            }
+        fin.audit();
+
+        String delete = "DELETE from `hotelmanag`.`candidates`  WHERE (`CandName` = '"+ name + "')";
+        String insert = "INSERT into hotelmanag.employees values ("+name+" , 800 , 30 , 10)";
+
+
+        try{
+            s.executeUpdate(delete);
+            s.executeQuery(insert);
+        } catch (SQLException e) {
+            System.out.println(e);
         }
+
+
     }
 
     void promote(String name) {
@@ -293,9 +402,14 @@ public class Management {
             case 6:
 
                 Scanner s2 = new Scanner(System.in);
-                hireCandidate(s2.nextLine());
-                System.out.println("Press 0 to display the menu again");
-                break;
+                try(Connection connection = DriverManager.getConnection(url, username, password);
+                    Statement st3 = connection.createStatement()) {
+                    hireCandidate(st3 , s2.nextLine() );    
+
+                } catch (SQLException e) {
+                    System.out.println(e);
+                }
+
 
             case 7:
 
@@ -323,9 +437,18 @@ public class Management {
 
 
             case 10:
+
                 Scanner s5 = new Scanner(System.in);
                 System.out.println("Type the name of the employee and the bonus");
-                increaseSalary(s5.nextLine(), s5.nextInt());
+
+                try(Connection connection = DriverManager.getConnection(url, username, password);
+                    Statement st = connection.createStatement()) {
+                    increaseSalary(st , s5.nextLine() , s5.nextInt() );
+
+                } catch (SQLException e) {
+                    System.out.println(e);
+                }
+
                 System.out.println("Press 0 to display the menu again");
                 break;
 
@@ -334,7 +457,16 @@ public class Management {
 
                 Scanner s6 = new Scanner (System.in);
                 System.out.println("Type the name of the employee and the amount");
-                decreaseSalary(s6.nextLine(), s6.nextInt());
+
+                try(Connection connection = DriverManager.getConnection(url, username, password);
+                    Statement sta = connection.createStatement()) {
+
+                    decreaseSalary(sta , s6.nextLine(), s6.nextInt());
+
+                } catch (SQLException e) {
+                    System.out.println(e);
+                }
+
                 System.out.println("Press 0 to display the menu again");
                 break;
 

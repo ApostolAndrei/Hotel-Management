@@ -5,7 +5,7 @@ public class RoyalClient extends Client {
     String function;
 
     public RoyalClient(String full_name, String country, Reservation rezervation, String preffered_meniu, String time_to_eat, String function) {
-        super( full_name, country, rezervation);
+        super(full_name, country, rezervation);
         this.preffered_meniu = preffered_meniu;
         this.time_to_eat = time_to_eat;
         this.function = function;

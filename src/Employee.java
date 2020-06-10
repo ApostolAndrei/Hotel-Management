@@ -1,6 +1,5 @@
-public class Employee {
+public class Employee extends Human {
 
-    private String name;
     private int id;
     private int salary;
     private int freedays;
@@ -9,10 +8,10 @@ public class Employee {
     static int starting_salary = 700;
 
 
-    public Employee(){}
+    public Employee(){super();}
 
     public Employee(String name, int salary, int freedays , int actions) {
-        this.name = name;
+        super(name);
         this.salary = salary;
         this.freedays = freedays;
         this.benefic_actions = actions;
@@ -21,7 +20,7 @@ public class Employee {
     }
 
     public String getName() {
-        return name;
+        return super.getName();
     }
 
     public int getSalary() {
@@ -42,9 +41,11 @@ public class Employee {
     }
 
     public int getBenefic_actions(){return id;}
-    String print()
+
+    public String print()
     {
-       return id + "." + name + " Salary: " + salary + ", Free Days left: " + freedays +  " Benefic actions : " + benefic_actions ;
+       return id + "." + super.getName()  + " Salary: " + salary + ", Free Days left: "
+               + freedays +  " Benefic actions : " + benefic_actions ;
     }
 
 }

@@ -1,18 +1,18 @@
-public class Leader {
+public class Leader  extends Human {
 
-    private String name;
+
     private int hire_year;
     private int salary;
 
 
     public Leader(String name, int hire_year, int salary) {
-        this.name = name;
+        super(name);
         this.hire_year = hire_year;
         this.salary = salary;
     }
 
     public String getName() {
-        return name;
+        return super.getName();
     }
 
     public int getHire_year() {
@@ -23,9 +23,9 @@ public class Leader {
         return salary;
     }
 
-    String print()
+    public String print()
     {
-        return name + " became a leader in " + hire_year
+        return super.getName() + " became a leader in " + hire_year
                 + " and his/her salary is " + salary;
     }
 
