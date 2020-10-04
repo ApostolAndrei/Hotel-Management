@@ -1,1 +1,1 @@
-Hotel Management Application
+Hotel Management Application - School Project
